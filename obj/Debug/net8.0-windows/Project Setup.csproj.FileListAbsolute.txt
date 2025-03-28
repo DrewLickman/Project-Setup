@@ -1,0 +1,17 @@
+C:\Users\drew1\Documents\Code Projects\Project Setup\bin\Debug\net8.0-windows\Project Setup.exe
+C:\Users\drew1\Documents\Code Projects\Project Setup\bin\Debug\net8.0-windows\Project Setup.deps.json
+C:\Users\drew1\Documents\Code Projects\Project Setup\bin\Debug\net8.0-windows\Project Setup.runtimeconfig.json
+C:\Users\drew1\Documents\Code Projects\Project Setup\bin\Debug\net8.0-windows\Project Setup.dll
+C:\Users\drew1\Documents\Code Projects\Project Setup\bin\Debug\net8.0-windows\Project Setup.pdb
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\ProjectStarter.MainForm.resources
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.csproj.GenerateResource.cache
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.AssemblyInfoInputs.cache
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.AssemblyInfo.cs
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.csproj.CoreCompileInputs.cache
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.sourcelink.json
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.dll
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\refint\Project Setup.dll
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.pdb
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\Project Setup.genruntimeconfig.cache
+C:\Users\drew1\Documents\Code Projects\Project Setup\obj\Debug\net8.0-windows\ref\Project Setup.dll

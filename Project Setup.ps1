@@ -27,7 +27,7 @@ function Check-Prerequisites {
 
 function Show-Banner {
     Write-Host "===============================================" -ForegroundColor Cyan
-    Write-Host "           PROJECT STARTER WIZARD             " -ForegroundColor Cyan
+    Write-Host "               PROJECT STARTER                 " -ForegroundColor Cyan
     Write-Host "===============================================" -ForegroundColor Cyan
     Write-Host "Get your project up and running in seconds!" -ForegroundColor Yellow
     Write-Host ""
