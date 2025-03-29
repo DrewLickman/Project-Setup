@@ -210,20 +210,23 @@ namespace ProjectStarter
             listHolder.Controls.Add(leftPanel);
 
             // Template selection section
-            Panel templatePanel = new Panel
+            TableLayoutPanel templateTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                AutoScroll = true
+                RowCount = 2,
+                ColumnCount = 1
             };
-            leftPanel.Controls.Add(templatePanel);
+            templateTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 25F)); // Fixed height for label
+            templateTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F)); // Remaining space for list
+            leftPanel.Controls.Add(templateTable);
 
             Label templateLabel = new Label
             {
                 Text = "Select Template:",
-                Dock = DockStyle.Top,
+                Dock = DockStyle.Fill,
                 AutoSize = true
             };
-            templatePanel.Controls.Add(templateLabel);
+            templateTable.Controls.Add(templateLabel, 0, 0);
 
             templateListBox = new ListBox
             {
@@ -231,7 +234,7 @@ namespace ProjectStarter
                 IntegralHeight = false,
                 BorderStyle = BorderStyle.FixedSingle
             };
-            templatePanel.Controls.Add(templateListBox);
+            templateTable.Controls.Add(templateListBox, 0, 1);
 
             foreach (string template in templates)
             {
@@ -248,20 +251,23 @@ namespace ProjectStarter
             listHolder.Controls.Add(rightPanel);
 
             // Enhancements section
-            Panel enhancementsPanel = new Panel
+            TableLayoutPanel enhancementsTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                AutoScroll = true
+                RowCount = 2,
+                ColumnCount = 1
             };
-            rightPanel.Controls.Add(enhancementsPanel);
+            enhancementsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 25F)); // Fixed height for label
+            enhancementsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F)); // Remaining space for list
+            rightPanel.Controls.Add(enhancementsTable);
 
             Label enhancementsLabel = new Label
             {
                 Text = "Select Enhancements (Optional):",
-                Dock = DockStyle.Top,
+                Dock = DockStyle.Fill,
                 AutoSize = true
             };
-            enhancementsPanel.Controls.Add(enhancementsLabel);
+            enhancementsTable.Controls.Add(enhancementsLabel, 0, 0);
 
             enhancementsListBox = new CheckedListBox
             {
@@ -270,7 +276,7 @@ namespace ProjectStarter
                 BorderStyle = BorderStyle.FixedSingle,
                 CheckOnClick = true
             };
-            enhancementsPanel.Controls.Add(enhancementsListBox);
+            enhancementsTable.Controls.Add(enhancementsListBox, 0, 1);
 
             foreach (string enhancement in enhancements)
             {
