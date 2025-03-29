@@ -709,44 +709,44 @@ namespace ProjectStarter
             switch (template)
             {
                 case "React":
-                    baseCommand = $"npx create-react-app {projectName}";
+                    baseCommand = $"npx --yes create-react-app {projectName}";
                     startCommand = "npm start";
                     break;
                 case "React + Vite":
-                    baseCommand = $"npm create vite@latest {projectName} -- --template react";
+                    baseCommand = $"npm create vite@latest {projectName} -y -- --template react";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     break;
                 case "Vite (Vanilla)":
-                    baseCommand = $"npm create vite@latest {projectName} -- --template vanilla";
+                    baseCommand = $"npm create vite@latest {projectName} -y -- --template vanilla";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     break;
                 case "Svelte":
-                    baseCommand = $"npx degit sveltejs/template {projectName}";
+                    baseCommand = $"npx --yes degit sveltejs/template {projectName}";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     break;
                 case "SvelteKit":
-                    baseCommand = $"npm create svelte@latest {projectName}";
+                    baseCommand = $"npm create svelte@latest {projectName} -y";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     break;
                 case "Vue":
-                    baseCommand = $"npm create vue@latest {projectName}";
+                    baseCommand = $"npm create vue@latest {projectName} -y";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     break;
                 case "Next.js":
-                    baseCommand = $"npx create-next-app@latest {projectName}";
+                    baseCommand = $"npx --yes create-next-app@latest {projectName}";
                     break;
                 case "Three.js (using Vite)":
-                    baseCommand = $"npm create vite@latest {projectName} -- --template vanilla";
+                    baseCommand = $"npm create vite@latest {projectName} -y -- --template vanilla";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     postInstallCommands.Add($"cd {projectName} && npm install three");
                     break;
                 case "Express":
-                    baseCommand = $"npx express-generator {projectName}";
+                    baseCommand = $"npx --yes express-generator {projectName}";
                     postInstallCommands.Add($"cd {projectName} && npm install");
                     startCommand = "npm start";
                     break;
                 case "Angular":
-                    baseCommand = $"npx @angular/cli new {projectName}";
+                    baseCommand = $"npx --yes @angular/cli new {projectName} --defaults";
                     startCommand = "ng serve";
                     break;
                 case "Tailwind Standalone":
@@ -964,54 +964,79 @@ export default defineConfig({
 
             try
             {
+                //ProcessStartInfo startInfo = new ProcessStartInfo
+                //{
+                //    FileName = "cmd.exe",
+                //    Arguments = $"/c {command}",
+                //    UseShellExecute = false,
+                //    RedirectStandardOutput = true,
+                //    RedirectStandardError = true,
+                //    CreateNoWindow = true,
+                //    WorkingDirectory = workingDirectory
+                //};
+
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = $"/c {command}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
+                    Arguments = $"/k cd /d \"{workingDirectory}\" && {command}",
+                    UseShellExecute = true, // This allows the window to be visible
+                    CreateNoWindow = false, // We want to see the window
                     WorkingDirectory = workingDirectory
                 };
 
-                using (Process process = new Process { StartInfo = startInfo })
-                {
-                    StringBuilder outputBuilder = new StringBuilder();
-                    StringBuilder errorBuilder = new StringBuilder();
+                // Launch process and let user interact with it directly
+                Process process = Process.Start(startInfo);
+                await process.WaitForExitAsync();
 
-                    process.OutputDataReceived += (sender, e) =>
-                    {
-                        if (!string.IsNullOrEmpty(e.Data))
-                        {
-                            AppendOutputThreadSafe(e.Data, Color.White);
-                        }
-                    };
+                //using (Process process = new Process { StartInfo = startInfo })
+                //{
+                //    StringBuilder outputBuilder = new StringBuilder();
+                //    StringBuilder errorBuilder = new StringBuilder();
 
-                    process.ErrorDataReceived += (sender, e) =>
-                    {
-                        if (!string.IsNullOrEmpty(e.Data))
-                        {
-                            AppendOutputThreadSafe(e.Data, Color.Red);
-                        }
-                    };
+                //    process.OutputDataReceived += (sender, e) =>
+                //    {
+                //        if (!string.IsNullOrEmpty(e.Data))
+                //        {
+                //            AppendOutputThreadSafe(e.Data, Color.White);
+                //        }
+                //    };
 
-                    process.Start();
+                //    process.ErrorDataReceived += (sender, e) =>
+                //    {
+                //        if (!string.IsNullOrEmpty(e.Data))
+                //        {
+                //            AppendOutputThreadSafe(e.Data, Color.Red);
+                //        }
+                //    };
 
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
+                //    process.Start();
 
-                    await process.WaitForExitAsync();
+                //    process.BeginOutputReadLine();
+                //    process.BeginErrorReadLine();
 
-                    if (process.ExitCode != 0)
-                    {
-                        AppendOutput($"Command completed with exit code: {process.ExitCode}", Color.Yellow);
-                    }
-                    else
-                    {
-                        AppendOutput("Command completed successfully", Color.Green);
-                    }
-                }
+                //    var timeoutTask = Task.Delay(TimeSpan.FromMinutes(5)); // 5-minute timeout
+                //    var processTask = process.WaitForExitAsync();
+                //    if (await Task.WhenAny(processTask, timeoutTask) == timeoutTask)
+                //    {
+                //        // Process timed out
+                //        try
+                //        {
+                //            process.Kill(true); // Kill the process and its children
+                //        }
+                //        catch { /* ignore errors on process kill */ }
+                //        AppendOutput("Process timed out after 5 minutes. Operation aborted.", Color.Red);
+                //        throw new TimeoutException("Command execution timed out.");
+                //    }
+
+                //    if (process.ExitCode != 0)
+                //    {
+                //        AppendOutput($"Command completed with exit code: {process.ExitCode}", Color.Yellow);
+                //    }
+                //    else
+                //    {
+                //        AppendOutput("Command completed successfully", Color.Green);
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -1034,12 +1059,29 @@ export default defineConfig({
 
         private void AppendOutputThreadSafe(string text, Color color)
         {
-            outputTextBox.SelectionStart = outputTextBox.TextLength;
-            outputTextBox.SelectionLength = 0;
-            outputTextBox.SelectionColor = color;
-            outputTextBox.AppendText(text + Environment.NewLine);
-            outputTextBox.SelectionStart = outputTextBox.TextLength;
-            outputTextBox.ScrollToCaret();
+            // Check if invoke is needed (we're on a different thread)
+            if (outputTextBox.InvokeRequired)
+            {
+                outputTextBox.Invoke(new Action(() => {
+                    // Now we're on the UI thread
+                    outputTextBox.SelectionStart = outputTextBox.TextLength;
+                    outputTextBox.SelectionLength = 0;
+                    outputTextBox.SelectionColor = color;
+                    outputTextBox.AppendText(text + Environment.NewLine);
+                    outputTextBox.SelectionStart = outputTextBox.TextLength;
+                    outputTextBox.ScrollToCaret();
+                }));
+            }
+            else
+            {
+                // Already on the UI thread
+                outputTextBox.SelectionStart = outputTextBox.TextLength;
+                outputTextBox.SelectionLength = 0;
+                outputTextBox.SelectionColor = color;
+                outputTextBox.AppendText(text + Environment.NewLine);
+                outputTextBox.SelectionStart = outputTextBox.TextLength;
+                outputTextBox.ScrollToCaret();
+            }
         }
 
         private string ShortenPath(string path, int maxFolders = 4)
