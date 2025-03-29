@@ -832,8 +832,8 @@ console.log('{projectName} is ready!');";
                 switch (enhancement)
                 {
                     case "Tailwind CSS":
-                        await ExecuteCommandAsync($"cd {projectName} && npm install -D tailwindcss postcss autoprefixer", outputDirectory);
-                        await ExecuteCommandAsync($"cd {projectName} && npx tailwindcss init -p", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npm install -D tailwindcss postcss autoprefixer --yes", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npx --yes tailwindcss init -p", outputDirectory);
 
                         // Create tailwind.config.js
                         string tailwindConfig = @"/** @type {import('tailwindcss').Config} */
@@ -876,7 +876,7 @@ module.exports = {
                         break;
 
                     case "ESLint + Prettier":
-                        await ExecuteCommandAsync($"cd {projectName} && npm install -D eslint prettier eslint-config-prettier eslint-plugin-prettier", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npm install -D eslint prettier eslint-config-prettier eslint-plugin-prettier --yes", outputDirectory);
 
                         // Create ESLint config
                         string eslintConfig = @"module.exports = {
@@ -911,7 +911,7 @@ module.exports = {
                         break;
 
                     case "Sass":
-                        await ExecuteCommandAsync($"cd {projectName} && npm install -D sass", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npm install -D sass --yes", outputDirectory);
                         AppendOutput("Added Sass support", Color.Green);
                         break;
 
@@ -921,7 +921,7 @@ module.exports = {
                         break;
 
                     case "Vitest (Unit testing)":
-                        await ExecuteCommandAsync($"cd {projectName} && npm install -D vitest", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npm install -D vitest --yes", outputDirectory);
 
                         // Create Vitest config
                         string vitestConfig = @"import { defineConfig } from 'vitest/config'
@@ -937,7 +937,7 @@ export default defineConfig({
                         break;
 
                     case "TypeScript":
-                        await ExecuteCommandAsync($"cd {projectName} && npm install -D typescript @types/node", outputDirectory);
+                        await ExecuteCommandAsync($"cd {projectName} && npm install -D typescript @types/node --yes", outputDirectory);
 
                         // Create tsconfig.json
                         string tsConfig = @"{
@@ -964,79 +964,80 @@ export default defineConfig({
 
             try
             {
-                //ProcessStartInfo startInfo = new ProcessStartInfo
-                //{
-                //    FileName = "cmd.exe",
-                //    Arguments = $"/c {command}",
-                //    UseShellExecute = false,
-                //    RedirectStandardOutput = true,
-                //    RedirectStandardError = true,
-                //    CreateNoWindow = true,
-                //    WorkingDirectory = workingDirectory
-                //};
-
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = $"/k cd /d \"{workingDirectory}\" && {command}",
-                    UseShellExecute = true, // This allows the window to be visible
-                    CreateNoWindow = false, // We want to see the window
+                    Arguments = $"/c {command}",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
                     WorkingDirectory = workingDirectory
                 };
 
-                // Launch process and let user interact with it directly
-                Process process = Process.Start(startInfo);
-                await process.WaitForExitAsync();
+                using (Process process = new Process { StartInfo = startInfo })
+                {
+                    StringBuilder outputBuilder = new StringBuilder();
+                    StringBuilder errorBuilder = new StringBuilder();
 
-                //using (Process process = new Process { StartInfo = startInfo })
+                    process.OutputDataReceived += (sender, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            AppendOutputThreadSafe(e.Data, Color.White);
+                        }
+                    };
+
+                    process.ErrorDataReceived += (sender, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            AppendOutputThreadSafe(e.Data, Color.Red);
+                        }
+                    };
+
+                    process.Start();
+
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
+                    var timeoutTask = Task.Delay(TimeSpan.FromMinutes(5)); // 5-minute timeout
+                    var processTask = process.WaitForExitAsync();
+                    if (await Task.WhenAny(processTask, timeoutTask) == timeoutTask)
+                    {
+                        // Process timed out
+                        try
+                        {
+                            process.Kill(true); // Kill the process and its children
+                        }
+                        catch { /* ignore errors on process kill */ }
+                        AppendOutput("Process timed out after 5 minutes. Operation aborted.", Color.Red);
+                        throw new TimeoutException("Command execution timed out.");
+                    }
+
+                    if (process.ExitCode != 0)
+                    {
+                        AppendOutput($"Command completed with exit code: {process.ExitCode}", Color.Yellow);
+                    }
+                    else
+                    {
+                        AppendOutput("Command completed successfully", Color.Green);
+                    }
+                }
+                   
+                // If I want to launch a separate terminal that the user can type into...
+                //ProcessStartInfo startInfo = new ProcessStartInfo
                 //{
-                //    StringBuilder outputBuilder = new StringBuilder();
-                //    StringBuilder errorBuilder = new StringBuilder();
+                //    FileName = "cmd.exe",
+                //    Arguments = $"/k cd /d \"{workingDirectory}\" && {command}",
+                //    UseShellExecute = true, // This allows the window to be visible
+                //    CreateNoWindow = false, // We want to see the window
+                //    WorkingDirectory = workingDirectory
+                //};
 
-                //    process.OutputDataReceived += (sender, e) =>
-                //    {
-                //        if (!string.IsNullOrEmpty(e.Data))
-                //        {
-                //            AppendOutputThreadSafe(e.Data, Color.White);
-                //        }
-                //    };
-
-                //    process.ErrorDataReceived += (sender, e) =>
-                //    {
-                //        if (!string.IsNullOrEmpty(e.Data))
-                //        {
-                //            AppendOutputThreadSafe(e.Data, Color.Red);
-                //        }
-                //    };
-
-                //    process.Start();
-
-                //    process.BeginOutputReadLine();
-                //    process.BeginErrorReadLine();
-
-                //    var timeoutTask = Task.Delay(TimeSpan.FromMinutes(5)); // 5-minute timeout
-                //    var processTask = process.WaitForExitAsync();
-                //    if (await Task.WhenAny(processTask, timeoutTask) == timeoutTask)
-                //    {
-                //        // Process timed out
-                //        try
-                //        {
-                //            process.Kill(true); // Kill the process and its children
-                //        }
-                //        catch { /* ignore errors on process kill */ }
-                //        AppendOutput("Process timed out after 5 minutes. Operation aborted.", Color.Red);
-                //        throw new TimeoutException("Command execution timed out.");
-                //    }
-
-                //    if (process.ExitCode != 0)
-                //    {
-                //        AppendOutput($"Command completed with exit code: {process.ExitCode}", Color.Yellow);
-                //    }
-                //    else
-                //    {
-                //        AppendOutput("Command completed successfully", Color.Green);
-                //    }
-                //}
+                //// Launch process and let user interact with it directly
+                //Process process = Process.Start(startInfo);
+                //await process.WaitForExitAsync();
             }
             catch (Exception ex)
             {
