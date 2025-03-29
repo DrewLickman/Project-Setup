@@ -12,10 +12,10 @@ namespace ProjectStarter
     public partial class MainForm : Form
     {
         // UI sizing constants
-        private const int DefaultFormWidth = 1000;
-        private const int DefaultFormHeight = 800;
+        private const int DefaultFormWidth = 640;
+        private const int DefaultFormHeight = 640;
         private const int DefaultSplitterDistance = 520;
-        private const int DefaultPanel1MinSize = 300;
+        private const int DefaultPanel1MinSize = 150;
         private const int DefaultPanel2MinSize = 150;
         private const int DefaultLeftPanelWidth = 480;
         private const int DefaultTitleHeight = 50;
@@ -80,8 +80,8 @@ namespace ProjectStarter
             this.Text = "Project Starter";
             this.Size = new Size(DefaultFormWidth, DefaultFormHeight);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.MaximizeBox = true;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Font = new Font("Segoe UI", 9F);
             this.AutoScroll = true;
 
@@ -155,7 +155,7 @@ namespace ProjectStarter
                 Text = "",
                 AutoSize = true,
                 ForeColor = Color.Blue,
-                Margin = new Padding(10, 0, 10, 0)
+                Margin = new Padding(0, 5, 0, 5)
             };
             locationPanel.Controls.Add(projectLocationLabel);
 
@@ -194,20 +194,25 @@ namespace ProjectStarter
             // -------------------------------------------
             // 2b) LIST HOLDER (Templates and Enhancements)
             // -------------------------------------------
-            Panel listHolder = new Panel
+            TableLayoutPanel listHolder = new TableLayoutPanel
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 1
             };
+            listHolder.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F)); // Left column gets 50%
+            listHolder.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F)); // Right column gets 50%
             mainContentHolder.Controls.Add(listHolder, 0, 1);
+
 
             // Left Panel: Template List (fixed width)
             Panel leftPanel = new Panel
             {
                 Dock = DockStyle.Left,
-                Width = DefaultLeftPanelWidth,
+                //Width = DefaultLeftPanelWidth,
                 Padding = new Padding(DefaultControlPadding)
             };
-            listHolder.Controls.Add(leftPanel);
+            listHolder.Controls.Add(leftPanel, 0, 0);
 
             // Template selection section
             TableLayoutPanel templateTable = new TableLayoutPanel
@@ -245,10 +250,10 @@ namespace ProjectStarter
             // Right Panel: Enhancements List (fills remaining space)
             Panel rightPanel = new Panel
             {
-                Dock = DockStyle.Fill,
+                Dock = DockStyle.Right,
                 Padding = new Padding(DefaultControlPadding)
             };
-            listHolder.Controls.Add(rightPanel);
+            listHolder.Controls.Add(rightPanel, 1, 0);
 
             // Enhancements section
             TableLayoutPanel enhancementsTable = new TableLayoutPanel
